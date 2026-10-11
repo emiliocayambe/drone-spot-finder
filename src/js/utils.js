@@ -5,6 +5,14 @@
  * @param {string} path - Path to the partial HTML file.
  * @returns {Promise<string>} - HTML content of the file.
  */
+
+export function getLocalISODate(d = new Date()) {
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${d.getFullYear()}-${month}-${day}`;
+}
+
+
 export async function loadTemplate(path) {
   try {
     const res = await fetch(path);
@@ -23,8 +31,8 @@ export async function loadTemplate(path) {
 export async function loadHeaderFooter() {
   try {
     // If your public folder is configured in Vite, adjust paths accordingly (e.g., "/partials/header.html")
-    const headerTemplate = await loadTemplate("/public/partials/header.html");
-    const footerTemplate = await loadTemplate("/public/partials/footer.html");
+    const headerTemplate = await loadTemplate("/partials/header.html");
+    const footerTemplate = await loadTemplate("/partials/footer.html");
 
     const headerElement = document.querySelector("#main-header");
     const footerElement = document.querySelector("#main-footer");

@@ -10,10 +10,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   const searchError = document.querySelector("#search-error");
   const plannerDate = document.querySelector("#planner-date");
 
-  // Set default date to today
   if (plannerDate) {
-    const today = new Date().toISOString().split("T")[0];
-    plannerDate.value = today;
+    plannerDate.value = getLocalISODate();
   }
 
   // Handle search form submission
