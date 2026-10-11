@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Drone Spot Finder | Home</title>
+    <link rel="stylesheet" href="./css/style.css" />
+    <script src="./js/main.js" type="module"></script>
+  </head>
+
+  <body
+    class="bg-gray-50 text-gray-900 font-sans min-h-screen flex flex-col justify-between"
+  >
+    <!-- Dynamically loaded header partial -->
+    <header
+      class="bg-white shadow-sm sticky top-0 z-50"
+      id="main-header"
+    ></header>
+
+    <!-- Main Content Area -->
+    <main class="max-w-7xl mx-auto px-4 py-8 w-full flex-grow">
+      <!-- Hero & Search Section -->
+      <section
+        class="bg-indigo-900 text-white rounded-3xl p-6 md:p-12 mb-12 shadow-lg relative overflow-hidden"
+      >
+        <div class="relative z-10 max-w-2xl">
+          <h1 class="text-3xl md:text-5xl font-extrabold mb-4 leading-tight">
+            Find safe drone spots & plan around golden hour
+          </h1>
+          <p class="text-indigo-200 text-base md:text-lg mb-8">
+            Discover ideal flying locations and precisely plan natural lighting
+            conditions for your shots.
+          </p>
+
+          <!-- Search Form -->
+          <form
+            id="search-form"
+            class="bg-white p-3 rounded-2xl shadow-md flex flex-col md:flex-row gap-3"
+          >
+            <div class="flex-grow relative">
+              <input
+                type="text"
+                id="search-input"
+                placeholder="Search a park, beach, reserve or place..."
+                class="w-full px-4 py-3 text-gray-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 border border-gray-200 text-sm"
+              />
+              <p
+                id="search-error"
+                class="hidden text-red-500 text-xs mt-1 ml-2"
+              >
+                Please enter a place name to search.
+              </p>
+            </div>
+
+            <div class="flex gap-2">
+              <button
+                type="button"
+                id="geo-btn"
+                class="px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-xl text-sm transition flex items-center justify-center whitespace-nowrap"
+                title="Use my location"
+              >
+                📍 My location
+              </button>
+              <button
+                type="submit"
+                class="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl text-sm transition shadow"
+              >
+                Search
+              </button>
+            </div>
+          </form>
+
+          <div class="mt-4 flex items-center text-sm text-indigo-200 gap-2">
+            <span>Date:</span>
+            <input
+              type="date"
+              id="planner-date"
+              class="bg-indigo-800/60 text-white px-3 py-1 rounded-lg border border-indigo-700 focus:outline-none"
+            />
+          </div>
+        </div>
+      </section>
+
+      <!-- Quick Access: Favorite Spots Section -->
+      <section class="mb-12">
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="text-xl md:text-2xl font-bold text-gray-800">
+            Quick access: Favorite spots
+          </h2>
+          <a
+            href="./favorites/index.html"
+            class="text-indigo-600 hover:text-indigo-800 font-semibold text-sm"
+            >See all favorites →</a
+          >
+        </div>
+
+        <div
+          id="favorites-container"
+          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+        >
+          <!-- Example Card -->
+          <div
+            class="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm hover:shadow-md transition"
+          >
+            <div
+              class="h-32 bg-gray-200 rounded-xl mb-3 flex items-center justify-center text-gray-400 text-xs"
+            >
+              IMAGE PREVIEW
+            </div>
+            <h3 class="font-bold text-gray-800 text-base mb-1">
+              Metropolitan Park
+            </h3>
+            <p class="text-xs text-gray-500 mb-3">
+              Next golden hour: Today 17:31 - 18:09
+            </p>
+            <a
+              href="./detail/index.html?lat=-0.1781&lon=-78.4703"
+              class="block text-center bg-indigo-50 text-indigo-600 hover:bg-indigo-100 font-semibold py-2 rounded-xl text-sm transition"
+            >
+              View detail
+            </a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Dynamically loaded footer partial -->
+    <footer
+      class="bg-white border-t border-gray-100 py-6 text-center text-xs text-gray-500"
+      id="main-footer"
+    ></footer>
+
+    <!-- Main Script Entry Point -->
+    <script src="./js/main.js" type="module"></script>
+  </body>
+</html>
