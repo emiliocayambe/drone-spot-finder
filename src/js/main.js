@@ -1,5 +1,5 @@
 // src/js/main.js
-import { loadHeaderFooter } from "./utils.js";
+import { loadHeaderFooter, getLocalISODate } from "./utils.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
   // Dynamically load header and footer partials on page load
