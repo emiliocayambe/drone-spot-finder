@@ -12,7 +12,6 @@ export function getLocalISODate(d = new Date()) {
   return `${d.getFullYear()}-${month}-${day}`;
 }
 
-
 export async function loadTemplate(path) {
   try {
     const res = await fetch(path);
@@ -31,8 +30,11 @@ export async function loadTemplate(path) {
 export async function loadHeaderFooter() {
   try {
     // If your public folder is configured in Vite, adjust paths accordingly (e.g., "/partials/header.html")
-    const headerTemplate = await loadTemplate("/partials/header.html");
-    const footerTemplate = await loadTemplate("/partials/footer.html");
+    const base = import.meta.env.BASE_URL;
+    const [headerTemplate, footerTemplate] = await Promise.all([
+      loadTemplate(`${base}partials/header.html`),
+      loadTemplate(`${base}partials/footer.html`),
+    ]);
 
     const headerElement = document.querySelector("#main-header");
     const footerElement = document.querySelector("#main-footer");
