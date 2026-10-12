@@ -11,12 +11,14 @@
   "keywords": [],
   "type": "module",
   "devDependencies": {
+    "@types/leaflet": "^1.9.22",
     "autoprefixer": "^10.6.1",
     "postcss": "^8.5.29",
     "tailwindcss": "^4.3.3",
     "vite": "^8.3.4"
   },
   "dependencies": {
-    "@tailwindcss/vite": "^4.3.3"
+    "@tailwindcss/vite": "^4.3.3",
+    "leaflet": "^1.9.4"
   }
 }

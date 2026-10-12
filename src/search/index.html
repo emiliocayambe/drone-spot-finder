@@ -3,23 +3,128 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Drone Spot Finder | Search</title>
-    <link rel="stylesheet" href="/css/style.css" />
-    <script src="/js/main.js" type="module"></script>
+    <title>Drone Spot Finder | Search Results</title>
+    <link rel="stylesheet" href="../css/style.css" />
+    <!-- Leaflet CSS -->
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
+    <script src="/js/search.js" type="module"></script>
   </head>
-  <body></body>
-  <!-- Dynamically loaded header partial -->
-  <header
-    class="bg-white shadow-sm sticky top-0 z-50"
-    id="main-header"
-  ></header>
-  <main class="max-w-7xl mx-auto px-4 py-8 w-full flex-grow"></main>
-  <!-- Dynamically loaded footer partial -->
-  <footer
-    class="bg-white border-t border-gray-100 py-6 text-center text-xs text-gray-500"
-    id="main-footer"
-  ></footer>
 
-  <!-- Main Script Entry Point -->
-  <script src="/js/main.js" type="module"></script>
+  <body
+    class="bg-gray-50 text-gray-900 font-sans min-h-screen flex flex-col justify-between"
+  >
+    <!-- Dynamically loaded header partial -->
+    <header
+      class="bg-white shadow-sm sticky top-0 z-50"
+      id="main-header"
+    ></header>
+
+    <!-- Main Content Area -->
+    <main class="max-w-7xl mx-auto px-4 py-8 w-full flex-grow">
+      <!-- Search Header & Controls -->
+      <div class="mb-8">
+        <h1 class="text-2xl md:text-3xl font-extrabold text-gray-800 mb-4">
+          Search Results
+        </h1>
+
+        <form
+          id="refine-form"
+          class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col md:flex-row gap-3 items-center"
+        >
+          <div class="w-full md:flex-grow relative">
+            <label for="refine-input" class="sr-only">Search location</label>
+            <input
+              type="text"
+              id="refine-input"
+              required
+              placeholder="Search another location..."
+              class="w-full px-4 py-2.5 text-gray-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 border border-gray-200 text-sm"
+            />
+          </div>
+
+          <div class="w-full md:w-auto flex flex-wrap items-center gap-2">
+            <label for="refine-date" class="sr-only">Date</label>
+            <input
+              type="date"
+              id="refine-date"
+              class="px-3 py-2.5 bg-gray-50 text-gray-800 rounded-xl border border-gray-200 text-sm focus:outline-none"
+            />
+
+            <label for="sort-select" class="sr-only">Sort results</label>
+            <select
+              id="sort-select"
+              class="px-3 py-2.5 bg-gray-50 text-gray-800 rounded-xl border border-gray-200 text-sm focus:outline-none"
+            >
+              <option value="name-asc">Name A–Z</option>
+              <option value="name-desc">Name Z–A</option>
+            </select>
+
+            <button
+              type="submit"
+              class="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl text-sm transition shadow whitespace-nowrap"
+            >
+              Search
+            </button>
+          </div>
+        </form>
+
+        <!-- Results Count & Error Message -->
+        <div
+          class="mt-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-2"
+        >
+          <p
+            id="results-count"
+            class="text-sm font-medium text-gray-600"
+            aria-live="polite"
+          ></p>
+          <p
+            id="search-error"
+            class="hidden text-red-500 text-xs"
+            aria-live="polite"
+          ></p>
+        </div>
+      </div>
+
+      <!-- Layout Grid: Results & Map -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+        <!-- Results Container (2 columns on desktop) -->
+        <section class="lg:col-span-2">
+          <div
+            id="results-container"
+            class="grid grid-cols-1 md:grid-cols-2 gap-6"
+          >
+            <!-- Initial loading spinner state -->
+            <div
+              class="col-span-full flex flex-col items-center justify-center py-16 text-gray-500"
+            >
+              <div
+                class="animate-spin rounded-full h-10 w-10 border-b-2 border-indigo-600 mb-4"
+              ></div>
+              <p class="text-sm">Searching locations...</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Map Container (1 column on desktop) -->
+        <aside
+          class="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm sticky top-24"
+        >
+          <h2 class="font-bold text-gray-800 text-sm mb-3">Map Preview</h2>
+          <div id="map" class="w-full h-96 rounded-xl bg-gray-100 z-10"></div>
+        </aside>
+      </div>
+    </main>
+
+    <!-- Dynamically loaded footer partial -->
+    <footer
+      class="bg-white border-t border-gray-100 py-6 text-center text-xs text-gray-500"
+      id="main-footer"
+    ></footer>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  </body>
 </html>

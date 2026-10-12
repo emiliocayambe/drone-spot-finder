@@ -19,63 +19,85 @@
 
     <!-- Main Content Area -->
     <main class="max-w-7xl mx-auto px-4 py-8 w-full flex-grow">
-      <!-- Hero & Search Section -->
+      <!-- 1. Hero Section in Two Columns -->
       <section
         class="bg-indigo-900 text-white rounded-3xl p-6 md:p-12 mb-12 shadow-lg relative overflow-hidden"
       >
-        <div class="relative z-10 max-w-2xl">
-          <h1 class="text-3xl md:text-5xl font-extrabold mb-4 leading-tight">
-            Find safe drone spots & plan around golden hour
-          </h1>
-          <p class="text-indigo-200 text-base md:text-lg mb-8">
-            Discover ideal flying locations and precisely plan natural lighting
-            conditions for your shots.
-          </p>
+        <div class="grid md:grid-cols-2 gap-8 items-center">
+          <div class="relative z-10">
+            <h1 class="text-3xl md:text-5xl font-extrabold mb-4 leading-tight">
+              Find safe drone spots & plan around golden hour
+            </h1>
+            <p class="text-indigo-200 text-base md:text-lg mb-8">
+              Discover ideal flying locations and precisely plan natural
+              lighting conditions for your shots.
+            </p>
 
-          <!-- Search Form -->
-          <form
-            id="search-form"
-            class="bg-white p-3 rounded-2xl shadow-md flex flex-col md:flex-row gap-3"
-          >
-            <div class="flex-grow relative">
+            <!-- Search Form -->
+            <form
+              id="search-form"
+              class="bg-white p-3 rounded-2xl shadow-md flex flex-col gap-3"
+            >
+              <div class="flex-grow relative">
+                <label for="search-input" class="sr-only">Search a spot</label>
+                <input
+                  type="text"
+                  id="search-input"
+                  required
+                  placeholder="Search a park, beach, reserve or place..."
+                  class="w-full px-4 py-3 text-gray-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 border border-gray-200 text-sm"
+                />
+                <p
+                  id="search-error"
+                  class="hidden text-red-500 text-xs mt-1 ml-2"
+                  aria-live="polite"
+                >
+                  Please enter a place name to search.
+                </p>
+              </div>
+
+              <div class="flex gap-2">
+                <button
+                  type="button"
+                  id="geo-btn"
+                  class="flex-1 px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-xl text-sm transition flex items-center justify-center whitespace-nowrap"
+                  title="Use my location"
+                >
+                  📍 My location
+                </button>
+                <button
+                  type="submit"
+                  class="flex-1 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl text-sm transition shadow"
+                >
+                  Search
+                </button>
+              </div>
+            </form>
+
+            <div class="mt-4 flex items-center text-sm text-indigo-200 gap-2">
+              <span>Date:</span>
               <input
-                type="text"
-                id="search-input"
-                placeholder="Search a park, beach, reserve or place..."
-                class="w-full px-4 py-3 text-gray-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 border border-gray-200 text-sm"
+                type="date"
+                id="planner-date"
+                class="bg-indigo-800/60 text-white px-3 py-1 rounded-lg border border-indigo-700 focus:outline-none"
               />
-              <p
-                id="search-error"
-                class="hidden text-red-500 text-xs mt-1 ml-2"
-              >
-                Please enter a place name to search.
-              </p>
             </div>
+          </div>
 
-            <div class="flex gap-2">
-              <button
-                type="button"
-                id="geo-btn"
-                class="px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-xl text-sm transition flex items-center justify-center whitespace-nowrap"
-                title="Use my location"
-              >
-                📍 My location
-              </button>
-              <button
-                type="submit"
-                class="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl text-sm transition shadow"
-              >
-                Search
-              </button>
-            </div>
-          </form>
-
-          <div class="mt-4 flex items-center text-sm text-indigo-200 gap-2">
-            <span>Date:</span>
-            <input
-              type="date"
-              id="planner-date"
-              class="bg-indigo-800/60 text-white px-3 py-1 rounded-lg border border-indigo-700 focus:outline-none"
+          <!-- Hero Image -->
+          <div class="hidden md:block">
+            <img
+              src="/images/hero-drone-1024.webp"
+              srcset="
+                /images/hero-drone-640.webp   640w,
+                /images/hero-drone-1024.webp 1024w
+              "
+              sizes="(min-width: 1280px) 600px, 50vw"
+              alt="Drone flying over Andean mountains at golden hour"
+              width="1024"
+              height="576"
+              fetchpriority="high"
+              class="rounded-2xl shadow-md object-cover w-full h-auto aspect-video"
             />
           </div>
         </div>
@@ -98,27 +120,55 @@
           id="favorites-container"
           class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
         >
-          <!-- Example Card -->
-          <div
-            class="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm hover:shadow-md transition"
-          >
+          <!-- Dynamically populated by renderFavorites() -->
+        </div>
+      </section>
+
+      <!-- 2. How it works Section -->
+      <section
+        class="mb-12 bg-white border border-gray-100 rounded-3xl p-8 shadow-sm"
+      >
+        <h2 class="text-2xl font-bold text-gray-800 text-center mb-8">
+          How it works
+        </h2>
+        <div class="grid md:grid-cols-3 gap-8">
+          <div class="text-center p-4">
             <div
-              class="h-32 bg-gray-200 rounded-xl mb-3 flex items-center justify-center text-gray-400 text-xs"
+              class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-4 text-xl font-bold"
             >
-              IMAGE PREVIEW
+              1
             </div>
-            <h3 class="font-bold text-gray-800 text-base mb-1">
-              Metropolitan Park
-            </h3>
-            <p class="text-xs text-gray-500 mb-3">
-              Next golden hour: Today 17:31 - 18:09
+            <h3 class="font-bold text-gray-800 text-lg mb-2">Search a spot</h3>
+            <p class="text-gray-500 text-sm">
+              Find any park, reserve, or open area using our location search
+              service.
             </p>
-            <a
-              href="./detail/index.html?lat=-0.1781&lon=-78.4703"
-              class="block text-center bg-indigo-50 text-indigo-600 hover:bg-indigo-100 font-semibold py-2 rounded-xl text-sm transition"
+          </div>
+          <div class="text-center p-4">
+            <div
+              class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-4 text-xl font-bold"
             >
-              View detail
-            </a>
+              2
+            </div>
+            <h3 class="font-bold text-gray-800 text-lg mb-2">Pick a date</h3>
+            <p class="text-gray-500 text-sm">
+              Select the specific day you plan to fly your drone to get accurate
+              sunlight data.
+            </p>
+          </div>
+          <div class="text-center p-4">
+            <div
+              class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-4 text-xl font-bold"
+            >
+              3
+            </div>
+            <h3 class="font-bold text-gray-800 text-lg mb-2">
+              Plan your golden hour
+            </h3>
+            <p class="text-gray-500 text-sm">
+              Check precise sunrise, sunset, and golden hour windows for
+              cinematic lighting.
+            </p>
           </div>
         </div>
       </section>
