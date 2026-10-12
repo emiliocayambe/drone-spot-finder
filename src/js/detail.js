@@ -15,9 +15,36 @@ document.addEventListener("DOMContentLoaded", async () => {
   const lon = urlParams.get("lon");
   const date = urlParams.get("date") || getLocalISODate();
   const nameParam = urlParams.get("name");
+  const searchQuery = urlParams.get("q") || "";
 
   const detailHeader = document.querySelector("#detail-header");
   const sunTimeline = document.querySelector("#sun-timeline");
+  const detailDateInput = document.querySelector("#detail-date");
+  const backLink = document.querySelector("#back-link");
+
+  // Configure back link behavior
+  if (backLink) {
+    if (searchQuery || urlParams.toString().includes("q=")) {
+      backLink.href = `../search/index.html?${urlParams.toString()}`;
+    } else {
+      backLink.href = "#";
+      backLink.addEventListener("click", (e) => {
+        e.preventDefault();
+        history.back();
+      });
+    }
+  }
+
+  // Set date input value and handle change event
+  if (detailDateInput) {
+    detailDateInput.value = date;
+    detailDateInput.addEventListener("change", (e) => {
+      const newDate = e.target.value;
+      const currentParams = new URLSearchParams(window.location.search);
+      currentParams.set("date", newDate);
+      window.location.search = currentParams.toString();
+    });
+  }
 
   if (!lat || !lon) {
     detailHeader.innerHTML = `<p class="text-red-500 text-sm">Error: Location coordinates are missing.</p>`;
@@ -31,10 +58,10 @@ document.addEventListener("DOMContentLoaded", async () => {
       <div>
         <span class="px-3 py-1 bg-sky-50 text-sky-700 rounded-lg text-xs font-semibold uppercase tracking-wider">Spot Detail</span>
         <h1 class="text-2xl md:text-3xl font-extrabold text-slate-800 mt-2">${escapeHTML(nameParam || "Selected Location")}</h1>
-        <p class="text-xs text-slate-500 mt-1">Latitude: ${Number(lat).toFixed(4)} | Longitude: ${Number(lon).toFixed(4)} | Date: ${date}</p>
+        <p class="text-xs text-slate-500 mt-1">Latitude: ${Number(lat).toFixed(4)} | Longitude: ${Number(lon).toFixed(4)}</p>
       </div>
       <button id="save-spot-btn" class="px-5 py-2.5 bg-sky-700 hover:bg-sky-800 text-white font-semibold rounded-xl text-sm transition shadow">
-        Save to Favorites
+        Save
       </button>
     </div>
   `;
@@ -49,9 +76,14 @@ document.addEventListener("DOMContentLoaded", async () => {
         name: nameParam || "Selected Location",
         displayName: nameParam || `Lat: ${lat}, Lon: ${lon}`,
       });
-      saveBtn.textContent = "Saved to Favorites ✓";
+      saveBtn.textContent = "Saved ✓";
       saveBtn.classList.remove("bg-sky-700", "hover:bg-sky-800");
       saveBtn.classList.add("bg-green-600");
+      setTimeout(() => {
+        saveBtn.textContent = "Save";
+        saveBtn.classList.remove("bg-green-600");
+        saveBtn.classList.add("bg-sky-700", "hover:bg-sky-800");
+      }, 1500);
     });
   }
 
@@ -59,6 +91,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   try {
     const sunData = await getSunData(lat, lon, date);
     const goldenHour = calcGoldenHour(sunData);
+    const userTimeZone =
+      Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
 
     const formatTime = (isoString) => {
       if (!isoString) return "N/A";
@@ -77,7 +111,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             <h3 class="font-bold text-amber-900 text-base">Morning Golden Hour</h3>
           </div>
           <p class="text-amber-800 text-sm font-semibold mb-1">
-            ${goldenHour.morning ? `${formatTime(goldenHour.morning.start)} - ${formatTime(goldenHour.morning.end)}` : "Unavailable"}
+            ${goldenHour.morning ? `${formatTime(goldenHour.morning.start)} -${formatTime(goldenHour.morning.end)}` : "Unavailable"}
           </p>
           <p class="text-amber-700 text-xs">Ideal soft lighting shortly after sunrise for cinematic drone shots.</p>
         </div>
@@ -89,7 +123,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             <h3 class="font-bold text-amber-900 text-base">Evening Golden Hour</h3>
           </div>
           <p class="text-amber-800 text-sm font-semibold mb-1">
-            ${goldenHour.evening ? `${formatTime(goldenHour.evening.start)} - ${formatTime(goldenHour.evening.end)}` : "Unavailable"}
+            ${goldenHour.evening ? `${formatTime(goldenHour.evening.start)} -${formatTime(goldenHour.evening.end)}` : "Unavailable"}
           </p>
           <p class="text-amber-700 text-xs">Warm, low-angle sunlight right before sunset for breathtaking aerial photography.</p>
         </div>
@@ -108,6 +142,10 @@ document.addEventListener("DOMContentLoaded", async () => {
           <p class="text-xs text-slate-500 uppercase font-semibold">Sunset</p>
           <p class="text-sm font-bold text-slate-800 mt-1">${formatTime(sunData.sunset)}</p>
         </div>
+      </div>
+
+      <div class="mt-4 text-center">
+        <p class="text-xs text-slate-500 italic">Times shown in your local time zone (${userTimeZone}).</p>
       </div>
     `;
   } catch (error) {
