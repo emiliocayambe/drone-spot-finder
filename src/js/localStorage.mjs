@@ -1,5 +1,3 @@
-// src/js/localStorage.mjs
-
 const FAVORITES_KEY = "dsf-favorites";
 
 /**
