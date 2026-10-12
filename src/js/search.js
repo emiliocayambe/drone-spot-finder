@@ -315,6 +315,7 @@ function hideError(element) {
  * Template generator for a spot search result card.
  */
 function spotCardTemplate(spot, date) {
+  const query = new URLSearchParams(window.location.search).get("q") || "";
   const fullDisplayName = spot.display_name || "Unknown Location";
   const parts = fullDisplayName.split(",");
   const mainName = parts[0].trim();
