@@ -37,8 +37,10 @@ export function escapeHTML(str) {
 export async function loadHeaderFooter() {
   try {
     const base = import.meta.env.BASE_URL;
-    loadTemplate(`${base}partials/header.html`);
-    loadTemplate(`${base}partials/footer.html`);
+    const [headerTemplate, footerTemplate] = await Promise.all([
+      loadTemplate(`${base}partials/header.html`),
+      loadTemplate(`${base}partials/footer.html`),
+    ]);
 
     const headerElement = document.querySelector("#main-header");
     const footerElement = document.querySelector("#main-footer");
