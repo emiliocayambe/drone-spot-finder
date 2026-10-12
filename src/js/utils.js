@@ -33,20 +33,42 @@ export function escapeHTML(str) {
 /**
  * Renders partial templates into their respective container elements on the page.
  */
+// src/js/utils.js (fragmento de loadHeaderFooter actualizado)
 export async function loadHeaderFooter() {
   try {
-    const headerTemplate = await loadTemplate("/partials/header.html");
-    const footerTemplate = await loadTemplate("/partials/footer.html");
+    const headerTemplate = await loadTemplate("/public/partials/header.html");
+    const footerTemplate = await loadTemplate("/public/partials/footer.html");
 
     const headerElement = document.querySelector("#main-header");
     const footerElement = document.querySelector("#main-footer");
 
     if (headerElement) {
       headerElement.innerHTML = headerTemplate;
+
+      // Highlight active nav link and add mobile menu toggle
+      const currentPath = window.location.pathname;
+      const navLinks = headerElement.querySelectorAll("nav a, #mobile-menu a");
+      
+      navLinks.forEach((link) => {
+        const href = link.getAttribute("href");
+        if (href === currentPath || (currentPath.includes("search") && href.includes("search")) || (currentPath.includes("favorites") && href.includes("favorites"))) {
+          link.setAttribute("aria-current", "page");
+          link.classList.add("text-sky-700", "border-b-2", "border-sky-700", "pb-1");
+          link.classList.remove("text-slate-600");
+        }
+      });
+
+      // Mobile menu toggle logic
+      const menuBtn = headerElement.querySelector("#menu-btn");
+      const mobileMenu = headerElement.querySelector("#mobile-menu");
+      if (menuBtn && mobileMenu) {
+        menuBtn.addEventListener("click", () => {
+          mobileMenu.classList.toggle("hidden");
+        });
+      }
     }
-    if (footerElement) {
-      footerElement.innerHTML = footerTemplate;
-    }
+
+    if (footerElement) footerElement.innerHTML = footerTemplate;
   } catch (error) {
     console.error("Error rendering header and footer:", error);
   }

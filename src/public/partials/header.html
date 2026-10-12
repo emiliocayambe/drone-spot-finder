@@ -1,15 +1,27 @@
 <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-  <a href="/" class="font-extrabold text-xl text-sky-700 tracking-wider"
-    >DRONE SPOT</a
+  <a
+    href="/"
+    class="flex items-center gap-2 font-extrabold text-xl text-sky-700 tracking-wider"
   >
+    <img
+      src="/images/favicon.ico"
+      alt="Drone Spot Logo"
+      class="w-7 h-7 object-contain"
+    />
+    <span>DRONE SPOT</span>
+  </a>
 
   <!-- Desktop Navigation -->
-  <nav class="space-x-6 hidden md:flex font-medium">
-    <a href="/" class="text-sky-700 border-b-2 border-sky-700 pb-1">Home</a>
-    <a href="/search/" class="text-slate-600 hover:text-sky-700 transition"
+  <nav class="space-x-6 hidden md:flex font-medium text-sm">
+    <a href="/" class="text-slate-600 hover:text-sky-700 transition pb-1"
+      >Home</a
+    >
+    <a href="/search/" class="text-slate-600 hover:text-sky-700 transition pb-1"
       >Search</a
     >
-    <a href="/favorites/" class="text-slate-600 hover:text-sky-700 transition"
+    <a
+      href="/favorites/"
+      class="text-slate-600 hover:text-sky-700 transition pb-1"
       >Favorites</a
     >
   </nav>
@@ -31,12 +43,14 @@
   </button>
 </div>
 
-<!-- Mobile Nav Drawer (Hidden by default) -->
+<!-- Mobile Nav Drawer -->
 <div
   id="mobile-menu"
   class="hidden md:hidden bg-white border-t border-slate-100 px-4 py-3 space-y-2"
 >
-  <a href="/" class="block text-sky-700 font-medium py-1">Home</a>
-  <a href="/search/" class="block text-slate-600 py-1">Search</a>
-  <a href="/favorites/" class="block text-slate-600 py-1">Favorites</a>
+  <a href="/" class="block text-slate-600 py-1 font-medium">Home</a>
+  <a href="/search/" class="block text-slate-600 py-1 font-medium">Search</a>
+  <a href="/favorites/" class="block text-slate-600 py-1 font-medium"
+    >Favorites</a
+  >
 </div>

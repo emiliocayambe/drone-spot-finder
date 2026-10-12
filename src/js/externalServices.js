@@ -9,7 +9,7 @@ const sunDataCache = new Map();
 export async function searchLocations(query) {
   if (!query || !query.trim()) return [];
 
-  const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&addressdetails=1&limit=10&email=student@byu.edu`;
+  const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&addressdetails=1&limit=10&email=ecayambemiranda@byupathway.edu`;
 
   try {
     const response = await fetch(url);
