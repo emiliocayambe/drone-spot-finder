@@ -36,8 +36,9 @@ export function escapeHTML(str) {
 // src/js/utils.js (fragmento de loadHeaderFooter actualizado)
 export async function loadHeaderFooter() {
   try {
-    const headerTemplate = await loadTemplate("/public/partials/header.html");
-    const footerTemplate = await loadTemplate("/public/partials/footer.html");
+    const base = import.meta.env.BASE_URL;
+    loadTemplate(`${base}partials/header.html`);
+    loadTemplate(`${base}partials/footer.html`);
 
     const headerElement = document.querySelector("#main-header");
     const footerElement = document.querySelector("#main-footer");
@@ -48,12 +49,21 @@ export async function loadHeaderFooter() {
       // Highlight active nav link and add mobile menu toggle
       const currentPath = window.location.pathname;
       const navLinks = headerElement.querySelectorAll("nav a, #mobile-menu a");
-      
+
       navLinks.forEach((link) => {
         const href = link.getAttribute("href");
-        if (href === currentPath || (currentPath.includes("search") && href.includes("search")) || (currentPath.includes("favorites") && href.includes("favorites"))) {
+        if (
+          href === currentPath ||
+          (currentPath.includes("search") && href.includes("search")) ||
+          (currentPath.includes("favorites") && href.includes("favorites"))
+        ) {
           link.setAttribute("aria-current", "page");
-          link.classList.add("text-sky-700", "border-b-2", "border-sky-700", "pb-1");
+          link.classList.add(
+            "text-sky-700",
+            "border-b-2",
+            "border-sky-700",
+            "pb-1",
+          );
           link.classList.remove("text-slate-600");
         }
       });
