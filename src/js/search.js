@@ -60,17 +60,21 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
-  // Handle real-time name filtering
+  // Handle real-time name filtering and counter update
   if (filterInput) {
     filterInput.addEventListener("input", () => {
       const filterValue = filterInput.value.toLowerCase().trim();
       const sortOrder = sortSelect ? sortSelect.value : "name-asc";
 
-      const filtered = currentLocations.filter((spot) =>
+      const filtered = (currentLocations || []).filter((spot) =>
         (spot.display_name || "").toLowerCase().includes(filterValue),
       );
 
       renderAndMapLocations(filtered, date, sortOrder, resultsContainer);
+
+      if (resultsCount) {
+        resultsCount.textContent = `${filtered.length} of ${currentLocations.length} results for "${query}"`;
+      }
     });
   }
 
@@ -209,7 +213,7 @@ async function handleSearch(
     await renderAndMapLocations(initialFiltered, date, sortOrder, container);
 
     if (countElement) {
-      countElement.textContent = `${enrichedLocations.length} results for "${query}"`;
+      countElement.textContent = `${initialFiltered.length} of ${enrichedLocations.length} results for "${query}"`;
     }
   } catch (error) {
     console.error("Search failed:", error);
@@ -245,8 +249,9 @@ async function renderAndMapLocations(locations, date, sortOrder, container) {
 
   if (sortedLocations.length === 0) {
     container.innerHTML = `
-      <div class="col-span-full text-center py-12 text-slate-500 text-sm">
-        No locations match your filter criteria.
+      <div class="col-span-full border-2 border-dashed border-slate-200 rounded-2xl p-8 text-center text-slate-500">
+        <p class="text-sm font-semibold text-slate-700 mb-1">No spots match that name</p>
+        <p class="text-xs">Try clearing or adjusting your filter criteria.</p>
       </div>
     `;
   } else {
