@@ -1,3 +1,4 @@
+// src/detail/detail.js
 import {
   loadHeaderFooter,
   getLocalISODate,
@@ -22,10 +23,11 @@ document.addEventListener("DOMContentLoaded", async () => {
   const detailDateInput = document.querySelector("#detail-date");
   const backLink = document.querySelector("#back-link");
 
-  // Configure back link behavior
+  // Configure back link cleanly using only q and date
   if (backLink) {
-    if (searchQuery || urlParams.toString().includes("q=")) {
-      backLink.href = `../search/index.html?${urlParams.toString()}`;
+    if (searchQuery) {
+      const returnParams = new URLSearchParams({ q: searchQuery, date });
+      backLink.href = `../search/index.html?${returnParams.toString()}`;
     } else {
       backLink.href = "#";
       backLink.addEventListener("click", (e) => {

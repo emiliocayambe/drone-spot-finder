@@ -346,7 +346,7 @@ function spotCardTemplate(spot, date) {
 
       <div class="flex gap-2 mt-4">
         <a 
-          href="../detail/index.html?lat=${lat}&lon=${lon}&date=${date}&name=${encodeURIComponent(mainName)}" 
+          href="../detail/index.html?lat=${lat}&lon=${lon}&date=${date}&q=${encodeURIComponent(query)}&name=${encodeURIComponent(mainName)}"
           class="flex-1 text-center bg-sky-700 hover:bg-sky-800 text-white font-semibold py-2.5 rounded-xl text-sm transition shadow"
         >
           View Details
