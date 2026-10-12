@@ -18,6 +18,12 @@ document.addEventListener("DOMContentLoaded", async () => {
   const searchError = document.querySelector("#search-error");
   const plannerDate = document.querySelector("#planner-date");
   const geoBtn = document.querySelector("#geo-btn");
+  const geoError = document.querySelector("#geo-error");
+
+  function showGeoError(msg) {
+    geoError.textContent = msg;
+    geoError.classList.remove("hidden");
+  }
 
   if (plannerDate) {
     plannerDate.value = getLocalISODate();
@@ -61,9 +67,15 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // Handle geolocation button click
   if (geoBtn) {
+    const geoError = document.querySelector("#geo-error");
+    function showGeoError(msg) {
+      geoError.textContent = msg;
+      geoError.classList.remove("hidden");
+    }
+
     geoBtn.addEventListener("click", () => {
       if (!("geolocation" in navigator)) {
-        alert("Geolocation is not supported by your browser.");
+        showGeoError("Geolocation is not supported by your browser.");
         return;
       }
 
@@ -76,7 +88,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         },
         (err) => {
           console.error("Geolocation error:", err);
-          alert(
+          showGeoError(
             "Unable to retrieve your location. Please check your permissions.",
           );
         },
