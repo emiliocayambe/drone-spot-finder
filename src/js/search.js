@@ -1,4 +1,3 @@
-// src/search/search.js
 import { loadHeaderFooter, getLocalISODate, escapeHTML } from "../js/utils.js";
 import { searchLocations, getSunData } from "../js/externalServices.js";
 import { saveFavorite } from "../js/localStorage.mjs";
@@ -34,6 +33,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const refineInput = document.querySelector("#refine-input");
   const refineDate = document.querySelector("#refine-date");
   const refineForm = document.querySelector("#refine-form");
+  const filterInput = document.querySelector("#filter-input");
   const sortSelect = document.querySelector("#sort-select");
   const resultsContainer = document.querySelector("#results-container");
   const resultsCount = document.querySelector("#results-count");
@@ -60,11 +60,31 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
-  // Handle sorting changes
+  // Handle real-time name filtering
+  if (filterInput) {
+    filterInput.addEventListener("input", () => {
+      const filterValue = filterInput.value.toLowerCase().trim();
+      const sortOrder = sortSelect ? sortSelect.value : "name-asc";
+
+      const filtered = currentLocations.filter((spot) =>
+        (spot.display_name || "").toLowerCase().includes(filterValue),
+      );
+
+      renderAndMapLocations(filtered, date, sortOrder, resultsContainer);
+    });
+  }
+
+  // Handle sorting changes considering current filter
   if (sortSelect) {
     sortSelect.addEventListener("change", async () => {
+      const filterValue = filterInput
+        ? filterInput.value.toLowerCase().trim()
+        : "";
+      const filtered = currentLocations.filter((spot) =>
+        (spot.display_name || "").toLowerCase().includes(filterValue),
+      );
       await renderAndMapLocations(
-        currentLocations,
+        filtered,
         date,
         sortSelect.value,
         resultsContainer,
@@ -177,8 +197,16 @@ async function handleSearch(
     currentLocations = enrichedLocations;
     const sortSelect = document.querySelector("#sort-select");
     const sortOrder = sortSelect ? sortSelect.value : "name-asc";
+    const filterInput = document.querySelector("#filter-input");
+    const filterValue = filterInput
+      ? filterInput.value.toLowerCase().trim()
+      : "";
 
-    await renderAndMapLocations(enrichedLocations, date, sortOrder, container);
+    const initialFiltered = enrichedLocations.filter((spot) =>
+      (spot.display_name || "").toLowerCase().includes(filterValue),
+    );
+
+    await renderAndMapLocations(initialFiltered, date, sortOrder, container);
 
     if (countElement) {
       countElement.textContent = `${enrichedLocations.length} results for "${query}"`;
@@ -215,9 +243,17 @@ async function renderAndMapLocations(locations, date, sortOrder, container) {
     return nameA.localeCompare(nameB);
   });
 
-  container.innerHTML = sortedLocations
-    .map((spot) => spotCardTemplate(spot, date))
-    .join("");
+  if (sortedLocations.length === 0) {
+    container.innerHTML = `
+      <div class="col-span-full text-center py-12 text-slate-500 text-sm">
+        No locations match your filter criteria.
+      </div>
+    `;
+  } else {
+    container.innerHTML = sortedLocations
+      .map((spot) => spotCardTemplate(spot, date))
+      .join("");
+  }
 
   if (markersLayer && map) {
     markersLayer.clearLayers();
