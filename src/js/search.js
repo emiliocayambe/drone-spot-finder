@@ -44,7 +44,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   initMap();
 
-  // Inside the refineForm submit listener:
   if (refineForm) {
     refineForm.addEventListener("submit", (e) => {
       e.preventDefault();
@@ -59,79 +58,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       const params = new URLSearchParams({ q: newQuery, date: newDate });
       window.location.href = `./index.html?${params.toString()}`;
     });
-  }
-
-  // Inside handleSearch:
-  async function handleSearch(
-    query,
-    date,
-    container,
-    countElement,
-    errorElement,
-  ) {
-    try {
-      hideError(errorElement);
-      showLoading(container);
-
-      const locations = await searchLocations(query);
-
-      if (!locations || locations.length === 0) {
-        container.innerHTML = `
-        <div class="col-span-full text-center py-12 text-gray-500 text-sm">
-          No locations found for "${escapeHTML(query)}". Try another landmark or park.
-        </div>
-      `;
-        if (countElement) countElement.textContent = `0 results for "${query}"`;
-        showError(`No locations found for "${query}".`, errorElement);
-        return;
-      }
-
-      // Fetch sun data in batches of 3 to respect API limits and prevent 429 errors
-      const batchSize = 3;
-      const enrichedLocations = [];
-
-      for (let i = 0; i < locations.length; i += batchSize) {
-        const batch = locations.slice(i, i + batchSize);
-        const batchResults = await Promise.all(
-          batch.map(async (spot) => {
-            try {
-              const sunData = await getSunData(spot.lat, spot.lon, date);
-              return { ...spot, dayLengthSeconds: sunData?.day_length || 0 };
-            } catch {
-              return { ...spot, dayLengthSeconds: 0 };
-            }
-          }),
-        );
-        enrichedLocations.push(...batchResults);
-      }
-
-      currentLocations = enrichedLocations;
-      const sortSelect = document.querySelector("#sort-select");
-      const sortOrder = sortSelect ? sortSelect.value : "name-asc";
-
-      await renderAndMapLocations(
-        enrichedLocations,
-        date,
-        sortOrder,
-        container,
-      );
-
-      if (countElement) {
-        countElement.textContent = `${enrichedLocations.length} results for "${query}"`;
-      }
-    } catch (error) {
-      console.error("Search failed:", error);
-      container.innerHTML = `
-      <div class="col-span-full text-center py-12 text-red-500 text-sm">
-        An error occurred while fetching locations. Please try again later.
-      </div>
-    `;
-      if (countElement) countElement.textContent = "0 results";
-      showError(
-        "Network error while connecting to location service.",
-        errorElement,
-      );
-    }
   }
 
   // Handle sorting changes
@@ -154,12 +80,12 @@ document.addEventListener("DOMContentLoaded", async () => {
         const spotData = JSON.parse(saveBtn.dataset.spot);
         saveFavorite(spotData);
         saveBtn.textContent = "Saved ✓";
-        saveBtn.classList.remove("bg-indigo-50", "text-indigo-600");
+        saveBtn.classList.remove("bg-sky-50", "text-sky-700");
         saveBtn.classList.add("bg-green-50", "text-green-600");
         setTimeout(() => {
-          saveBtn.textContent = "Save Spot";
+          saveBtn.textContent = "Save";
           saveBtn.classList.remove("bg-green-50", "text-green-600");
-          saveBtn.classList.add("bg-indigo-50", "text-indigo-600");
+          saveBtn.classList.add("bg-sky-50", "text-sky-700");
         }, 1500);
       }
     });
@@ -176,7 +102,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   } else {
     showError("Please enter a search term to find drone spots.", searchError);
     resultsContainer.innerHTML = `
-      <div class="col-span-full text-center py-12 text-gray-500 text-sm">
+      <div class="col-span-full text-center py-12 text-slate-500 text-sm">
         No search query provided.
       </div>
     `;
@@ -203,7 +129,7 @@ function initMap() {
 }
 
 /**
- * Fetches search results and enriches them with sun data for daylight sorting.
+ * Fetches search results and enriches them with sun data in batches of 3.
  */
 async function handleSearch(
   query,
@@ -220,31 +146,34 @@ async function handleSearch(
 
     if (!locations || locations.length === 0) {
       container.innerHTML = `
-        <div class="col-span-full text-center py-12 text-gray-500 text-sm">
+        <div class="col-span-full text-center py-12 text-slate-500 text-sm">
           No locations found for "${escapeHTML(query)}". Try another landmark or park.
         </div>
       `;
       if (countElement) countElement.textContent = `0 results for "${query}"`;
-      showError(`No locations found for "${query}".`, errorElement);
+      showError(`No locations found for "${query}"`, errorElement);
       return;
     }
 
-    // Enrich locations with day_length safely using individual try/catch
-    const enrichedLocations = await Promise.all(
-      locations.map(async (spot) => {
-        try {
-          const sunData = await getSunData(spot.lat, spot.lon, date);
-          return { ...spot, dayLengthSeconds: sunData?.day_length || 0 };
-        } catch (sunError) {
-          console.warn(
-            `Could not fetch sun data for lat: ${spot.lat}, lon: ${spot.lon}`,
-            sunError,
-          );
-          // Fallback so the spot still renders even if Sunrise-Sunset API fails
-          return { ...spot, dayLengthSeconds: 0 };
-        }
-      }),
-    );
+    // Fetch sun data in batches of 3 to respect API limits and prevent 429 errors
+    const batchSize = 3;
+    const enrichedLocations = [];
+
+    for (let i = 0; i < locations.length; i += batchSize) {
+      const batch = locations.slice(i, i + batchSize);
+      const batchResults = await Promise.all(
+        batch.map(async (spot) => {
+          try {
+            const sunData = await getSunData(spot.lat, spot.lon, date);
+            return { ...spot, dayLengthSeconds: sunData?.day_length || 0 };
+          } catch {
+            return { ...spot, dayLengthSeconds: 0 };
+          }
+        }),
+      );
+      enrichedLocations.push(...batchResults);
+    }
+
     currentLocations = enrichedLocations;
     const sortSelect = document.querySelector("#sort-select");
     const sortOrder = sortSelect ? sortSelect.value : "name-asc";
@@ -283,7 +212,7 @@ async function renderAndMapLocations(locations, date, sortOrder, container) {
     if (sortOrder === "daylight-desc") {
       return (b.dayLengthSeconds || 0) - (a.dayLengthSeconds || 0);
     }
-    return nameA.localeCompare(nameB); // default name-asc
+    return nameA.localeCompare(nameB);
   });
 
   container.innerHTML = sortedLocations
@@ -316,8 +245,8 @@ async function renderAndMapLocations(locations, date, sortOrder, container) {
  */
 function showLoading(container) {
   container.innerHTML = `
-    <div class="col-span-full flex flex-col items-center justify-center py-16 text-gray-500">
-      <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-indigo-600 mb-4"></div>
+    <div class="col-span-full flex flex-col items-center justify-center py-16 text-slate-500">
+      <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-sky-700 mb-4"></div>
       <p class="text-sm">Searching locations and daylight data...</p>
     </div>
   `;
@@ -354,7 +283,6 @@ function spotCardTemplate(spot, date) {
   const lon = spot.lon;
   const placeType = spot.type || spot.class || "spot";
 
-  // Prepare object for localStorage saving
   const spotPayload = JSON.stringify({
     lat,
     lon,
@@ -363,29 +291,30 @@ function spotCardTemplate(spot, date) {
   });
 
   return `
-    <div class="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm hover:shadow-md transition flex flex-col justify-between">
+    <div class="bg-white border border-slate-100 rounded-2xl p-5 shadow-sm hover:shadow-md transition flex flex-col justify-between">
       <div>
         <div class="flex justify-between items-start mb-3">
-          <span class="px-2.5 py-1 bg-indigo-50 text-indigo-600 rounded-lg text-xs font-semibold uppercase tracking-wider">
+          <span class="px-2.5 py-1 bg-sky-50 text-sky-700 rounded-lg text-xs font-semibold uppercase tracking-wider">
             ${escapeHTML(placeType)}
           </span>
-          <span class="text-xs text-gray-400">GPS: ${Number(lat).toFixed(2)}, ${Number(lon).toFixed(2)}</span>
+          <span class="text-xs text-slate-500">GPS: ${Number(lat).toFixed(2)}, ${Number(lon).toFixed(2)}</span>
         </div>
-        <h3 class="font-bold text-gray-800 text-base mb-1 line-clamp-1">${escapeHTML(mainName)}</h3>
-        <p class="text-xs text-gray-500 mb-4 line-clamp-2">${escapeHTML(subName)}</p>
+        <h3 class="font-bold text-slate-800 text-base mb-1 line-clamp-1">${escapeHTML(mainName)}</h3>
+        <p class="text-xs text-slate-500 mb-4 line-clamp-2">${escapeHTML(subName)}</p>
       </div>
 
       <div class="flex gap-2 mt-4">
         <a 
-          href="../detail/index.html?lat=${lat}&lon=${lon}&date=${date}" 
-          class="flex-1 text-center bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-xl text-sm transition shadow"
+          href="../detail/index.html?lat=${lat}&lon=${lon}&date=${date}&name=${encodeURIComponent(mainName)}" 
+          class="flex-1 text-center bg-sky-700 hover:bg-sky-800 text-white font-semibold py-2.5 rounded-xl text-sm transition shadow"
         >
           View Details
         </a>
-        <button 
-          data-save 
-          data-spot='${escapeHTML(spotPayload)}' 
-          class="px-4 py-2.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 font-semibold rounded-xl text-sm transition"
+        <button
+          data-save
+          data-spot='${escapeHTML(spotPayload)}'
+          class="px-4 py-2.5 bg-sky-50 hover:bg-sky-100 text-sky-700 font-semibold rounded-xl text-sm transition"
+          aria-label="Save ${escapeHTML(mainName)} to favorites"
           title="Save to favorites"
         >
           Save

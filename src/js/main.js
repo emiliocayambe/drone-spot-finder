@@ -1,4 +1,9 @@
-import { loadHeaderFooter, getLocalISODate } from "./utils.js";
+import {
+  loadHeaderFooter,
+  getLocalISODate,
+  latLonToTile,
+  escapeHTML,
+} from "./utils.js";
 import { getFavorites } from "./localStorage.mjs";
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -16,15 +21,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   if (plannerDate) {
     plannerDate.value = getLocalISODate();
-  }
-
-  // Mobile menu toggle logic
-  const menuBtn = document.querySelector("#menu-btn");
-  const mobileMenu = document.querySelector("#mobile-menu");
-  if (menuBtn && mobileMenu) {
-    menuBtn.addEventListener("click", () => {
-      mobileMenu.classList.toggle("hidden");
-    });
   }
 
   // Real-time input validation to clear error states
@@ -97,12 +93,14 @@ document.addEventListener("DOMContentLoaded", async () => {
  * @returns {string} - HTML string for the card.
  */
 function favoriteCardTemplate(spot) {
+  const title = escapeHTML(spot.name || spot.displayName);
+  const { x, y } = latLonToTile(Number(spot.lat), Number(spot.lon));
   return `
-    <div class="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm hover:shadow-md transition">
-      <div class="h-32 bg-gray-200 rounded-xl mb-3 flex items-center justify-center text-gray-400 text-xs">IMAGE PREVIEW</div>
-      <h3 class="font-bold text-gray-800 text-base mb-1 truncate">${spot.name || spot.displayName}</h3>
-      <p class="text-xs text-gray-500 mb-3">Lat: ${spot.lat}, Lon: ${spot.lon}</p>
-      <a href="./detail/index.html?lat=${spot.lat}&lon=${spot.lon}" class="block text-center bg-indigo-50 text-indigo-600 hover:bg-indigo-100 font-semibold py-2 rounded-xl text-sm transition">
+    <div class="bg-white border border-slate-100 rounded-2xl p-4 shadow-sm hover:shadow-md transition">
+      <div class="h-32 bg-slate-200 rounded-xl mb-3 flex items-center justify-center text-slate-500 text-xs"><img src="https://tile.openstreetmap.org/13/${x}/${y}.png" alt="Map of ${title}" loading="lazy" class="w-full h-32 object-cover rounded-xl"></div>
+      <h3 class="font-bold text-slate-800 text-base mb-1 truncate">${title || spot.displayName}</h3>
+      <p class="text-xs text-slate-500 mb-3">Lat: ${spot.lat}, Lon: ${spot.lon}</p>
+      <a href="./detail/index.html?lat=${spot.lat}&lon=${spot.lon}&name=${encodeURIComponent(spot.name || "")}" class="block text-center bg-sky-50 text-sky-700 hover:bg-sky-100 font-semibold py-2 rounded-xl text-sm transition">
         View detail
       </a>
     </div>
@@ -121,7 +119,7 @@ function renderFavorites() {
 
   if (topFavorites.length === 0) {
     container.innerHTML = `
-      <div class="col-span-full border-2 border-dashed border-gray-200 rounded-2xl p-8 text-center text-gray-500">
+      <div class="col-span-full border-2 border-dashed border-slate-200 rounded-2xl p-8 text-center text-slate-500">
         <p class="text-sm">No favorites yet – search a spot and tap Save.</p>
       </div>
     `;

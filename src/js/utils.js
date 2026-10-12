@@ -124,3 +124,13 @@ export function calcGoldenHour(sunResults) {
     evening: { start: eveningStart, end: eveningEnd },
   };
 }
+
+export function latLonToTile(lat, lon, zoom = 13) {
+  const n = 2 ** zoom;
+  const x = Math.floor(((lon + 180) / 360) * n);
+  const rad = (lat * Math.PI) / 180;
+  const y = Math.floor(
+    ((1 - Math.log(Math.tan(rad) + 1 / Math.cos(rad)) / Math.PI) / 2) * n,
+  );
+  return { x, y };
+}
