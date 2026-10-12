@@ -44,7 +44,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   initMap();
 
-  // Handle refine search submission using URLSearchParams
+  // Inside the refineForm submit listener:
   if (refineForm) {
     refineForm.addEventListener("submit", (e) => {
       e.preventDefault();
@@ -57,11 +57,81 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
 
       const params = new URLSearchParams({ q: newQuery, date: newDate });
-      window.location.href = `./index.html?toString=${params}`.replace(
-        "toString=",
-        params.toString(),
-      );
+      window.location.href = `./index.html?${params.toString()}`;
     });
+  }
+
+  // Inside handleSearch:
+  async function handleSearch(
+    query,
+    date,
+    container,
+    countElement,
+    errorElement,
+  ) {
+    try {
+      hideError(errorElement);
+      showLoading(container);
+
+      const locations = await searchLocations(query);
+
+      if (!locations || locations.length === 0) {
+        container.innerHTML = `
+        <div class="col-span-full text-center py-12 text-gray-500 text-sm">
+          No locations found for "${escapeHTML(query)}". Try another landmark or park.
+        </div>
+      `;
+        if (countElement) countElement.textContent = `0 results for "${query}"`;
+        showError(`No locations found for "${query}".`, errorElement);
+        return;
+      }
+
+      // Fetch sun data in batches of 3 to respect API limits and prevent 429 errors
+      const batchSize = 3;
+      const enrichedLocations = [];
+
+      for (let i = 0; i < locations.length; i += batchSize) {
+        const batch = locations.slice(i, i + batchSize);
+        const batchResults = await Promise.all(
+          batch.map(async (spot) => {
+            try {
+              const sunData = await getSunData(spot.lat, spot.lon, date);
+              return { ...spot, dayLengthSeconds: sunData?.day_length || 0 };
+            } catch {
+              return { ...spot, dayLengthSeconds: 0 };
+            }
+          }),
+        );
+        enrichedLocations.push(...batchResults);
+      }
+
+      currentLocations = enrichedLocations;
+      const sortSelect = document.querySelector("#sort-select");
+      const sortOrder = sortSelect ? sortSelect.value : "name-asc";
+
+      await renderAndMapLocations(
+        enrichedLocations,
+        date,
+        sortOrder,
+        container,
+      );
+
+      if (countElement) {
+        countElement.textContent = `${enrichedLocations.length} results for "${query}"`;
+      }
+    } catch (error) {
+      console.error("Search failed:", error);
+      container.innerHTML = `
+      <div class="col-span-full text-center py-12 text-red-500 text-sm">
+        An error occurred while fetching locations. Please try again later.
+      </div>
+    `;
+      if (countElement) countElement.textContent = "0 results";
+      showError(
+        "Network error while connecting to location service.",
+        errorElement,
+      );
+    }
   }
 
   // Handle sorting changes
@@ -159,18 +229,22 @@ async function handleSearch(
       return;
     }
 
-    // Enrich locations with day_length via Promise.all for daylight sorting
+    // Enrich locations with day_length safely using individual try/catch
     const enrichedLocations = await Promise.all(
       locations.map(async (spot) => {
         try {
           const sunData = await getSunData(spot.lat, spot.lon, date);
-          return { ...spot, dayLengthSeconds: sunData.day_length || 0 };
-        } catch {
+          return { ...spot, dayLengthSeconds: sunData?.day_length || 0 };
+        } catch (sunError) {
+          console.warn(
+            `Could not fetch sun data for lat: ${spot.lat}, lon: ${spot.lon}`,
+            sunError,
+          );
+          // Fallback so the spot still renders even if Sunrise-Sunset API fails
           return { ...spot, dayLengthSeconds: 0 };
         }
       }),
     );
-
     currentLocations = enrichedLocations;
     const sortSelect = document.querySelector("#sort-select");
     const sortOrder = sortSelect ? sortSelect.value : "name-asc";

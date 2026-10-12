@@ -18,6 +18,15 @@ document.addEventListener("DOMContentLoaded", async () => {
     plannerDate.value = getLocalISODate();
   }
 
+  // Mobile menu toggle logic
+  const menuBtn = document.querySelector("#menu-btn");
+  const mobileMenu = document.querySelector("#mobile-menu");
+  if (menuBtn && mobileMenu) {
+    menuBtn.addEventListener("click", () => {
+      mobileMenu.classList.toggle("hidden");
+    });
+  }
+
   // Real-time input validation to clear error states
   if (searchInput) {
     searchInput.addEventListener("input", () => {

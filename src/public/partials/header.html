@@ -1,23 +1,25 @@
 <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-  <a href="/" class="font-extrabold text-xl text-indigo-600 tracking-wider"
+  <a href="/" class="font-extrabold text-xl text-sky-700 tracking-wider"
     >DRONE SPOT</a
   >
 
-  <!-- Navegación de Escritorio -->
+  <!-- Desktop Navigation -->
   <nav class="space-x-6 hidden md:flex font-medium">
-    <a href="/" class="text-indigo-600 border-b-2 border-indigo-600 pb-1"
-      >Inicio</a
+    <a href="/" class="text-sky-700 border-b-2 border-sky-700 pb-1">Home</a>
+    <a href="/search/" class="text-slate-600 hover:text-sky-700 transition"
+      >Search</a
     >
-    <a href="/search/" class="text-gray-600 hover:text-indigo-600 transition"
-      >Buscar</a
-    >
-    <a href="/favorites/" class="text-gray-600 hover:text-indigo-600 transition"
-      >Favoritos</a
+    <a href="/favorites/" class="text-slate-600 hover:text-sky-700 transition"
+      >Favorites</a
     >
   </nav>
 
-  <!-- Botón Menú Móvil -->
-  <button id="menu-btn" class="md:hidden text-gray-700 focus:outline-none">
+  <!-- Mobile Menu Button -->
+  <button
+    id="menu-btn"
+    class="md:hidden text-slate-700 focus:outline-none"
+    aria-label="Toggle navigation menu"
+  >
     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path
         stroke-linecap="round"
@@ -27,4 +29,14 @@
       ></path>
     </svg>
   </button>
+</div>
+
+<!-- Mobile Nav Drawer (Hidden by default) -->
+<div
+  id="mobile-menu"
+  class="hidden md:hidden bg-white border-t border-slate-100 px-4 py-3 space-y-2"
+>
+  <a href="/" class="block text-sky-700 font-medium py-1">Home</a>
+  <a href="/search/" class="block text-slate-600 py-1">Search</a>
+  <a href="/favorites/" class="block text-slate-600 py-1">Favorites</a>
 </div>

@@ -1,23 +1,21 @@
 import { getLocalISODate } from "./utils.js";
 
+// In-memory cache to store sun data and prevent redundant API requests
+const sunDataCache = new Map();
+
 /**
  * Searches locations using the public Nominatim API (OpenStreetMap).
- * @param {string} query - The search term (e.g., "Park", "Beach").
- * @returns {Promise<Array>} - A list of matching location objects.
  */
 export async function searchLocations(query) {
   if (!query || !query.trim()) return [];
 
-  // Nominatim policy compliance: use email query parameter instead of User-Agent header in browsers, and request address details
-  const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&addressdetails=1&limit=10&email=ecayambemiranda@byupathway.edu`;
+  const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&addressdetails=1&limit=10&email=student@byu.edu`;
 
   try {
     const response = await fetch(url);
-
     if (!response.ok) {
-      throw new Error(`Network error: ${response.statusText}`);
+      throw new Error(`Nominatim error ${response.status}`);
     }
-
     const data = await response.json();
     return data;
   } catch (error) {
@@ -27,30 +25,37 @@ export async function searchLocations(query) {
 }
 
 /**
- * Fetches sunrise, sunset, and solar data for specific coordinates and date.
- * @param {number|string} lat - Latitude.
- * @param {number|string} lon - Longitude.
- * @param {string} [date] - Date in YYYY-MM-DD format.
- * @returns {Promise<Object>} - Sunlight data object.
+ * Fetches sunrise, sunset, and solar data with built-in caching.
  */
 export async function getSunData(lat, lon, date = getLocalISODate()) {
+  const cacheKey = `${Number(lat).toFixed(4)},${Number(lon).toFixed(4)},${date}`;
+
+  if (sunDataCache.has(cacheKey)) {
+    return sunDataCache.get(cacheKey);
+  }
+
   const url = `https://api.sunrise-sunset.org/json?lat=${lat}&lng=${lon}&date=${date}&formatted=0`;
 
   try {
     const response = await fetch(url);
     if (!response.ok) {
-      throw new Error(`Network error: ${response.statusText}`);
+      throw new Error(`Sunrise-Sunset error ${response.status}`);
     }
 
     const data = await response.json();
 
     if (data.status !== "OK") {
-      throw new Error("Failed to retrieve sun data from API.");
+      throw new Error(`Sunrise-Sunset API status: ${data.status}`);
     }
 
+    // Save result to cache
+    sunDataCache.set(cacheKey, data.results);
     return data.results;
   } catch (error) {
-    console.error("Error fetching from Sunrise-Sunset API:", error);
+    console.warn(
+      `Error fetching sun data for (${lat}, ${lon}):`,
+      error.message,
+    );
     throw error;
   }
 }
