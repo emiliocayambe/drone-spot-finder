@@ -3,30 +3,44 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Drone Spot Finder | Favorite</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="icon" type="image/x-icon" href="/images/favicon.ico" />
+    <link rel="icon" href="/images/favicon.ico" />
+    <title>Drone Spot Finder | Favorite Spots</title>
     <link rel="stylesheet" href="/css/style.css" />
-    <script src="/js/main.js" type="module"></script>
+    <script src="/js/favorites.js" type="module"></script>
   </head>
-  <body></body>
-  <!-- Dynamically loaded header partial -->
-  <header
-    class="bg-white shadow-sm sticky top-0 z-50"
-    id="main-header"
-  ></header>
-  <main class="max-w-7xl mx-auto px-4 py-8 w-full flex-grow"></main>
-  <!-- Dynamically loaded footer partial -->
-  <footer
-    class="bg-white border-t border-gray-100 py-6 text-center text-xs text-gray-500"
-    id="main-footer"
-  ></footer>
+  <body
+    class="bg-slate-50 text-slate-900 font-sans min-h-screen flex flex-col justify-between"
+  >
+    <header
+      class="bg-white shadow-sm sticky top-0 z-50"
+      id="main-header"
+    ></header>
 
-  <!-- Main Script Entry Point -->
-  <script src="/js/main.js" type="module"></script>
+    <main class="max-w-7xl mx-auto px-4 py-8 w-full flex-grow">
+      <div class="mb-8">
+        <h1 class="text-2xl md:text-3xl font-extrabold text-slate-800 mb-2">
+          Favorite Spots
+        </h1>
+        <p class="text-sm text-slate-500">
+          Quickly access your saved flying locations and check golden hour
+          conditions.
+        </p>
+      </div>
+
+      <!-- Favorites Grid Container -->
+      <section>
+        <div
+          id="favorites-grid"
+          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+        >
+          <!-- Dynamically populated -->
+        </div>
+      </section>
+    </main>
+
+    <footer
+      class="bg-white border-t border-slate-100 py-6 text-center text-xs text-slate-500"
+      id="main-footer"
+    ></footer>
+  </body>
 </html>
