@@ -18,7 +18,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   const searchError = document.querySelector("#search-error");
   const plannerDate = document.querySelector("#planner-date");
   const geoBtn = document.querySelector("#geo-btn");
-  const geoError = document.querySelector("#geo-error");
 
   function showGeoError(msg) {
     geoError.textContent = msg;
