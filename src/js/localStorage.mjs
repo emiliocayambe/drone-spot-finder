@@ -52,3 +52,39 @@ export function removeFavorite(id) {
     console.error("Error removing favorite from localStorage:", error);
   }
 }
+
+// Añade esto en src/js/localStorage.mjs
+
+const LAST_SEARCH_KEY = "dsf-last-search";
+
+/**
+ * Saves the last search query and date to localStorage.
+ * @param {string} query - The search query.
+ * @param {string} date - The selected date (YYYY-MM-DD).
+ */
+export function saveLastSearch(query, date) {
+  try {
+    const searchData = {
+      query,
+      date,
+      savedAt: new Date().toISOString(),
+    };
+    localStorage.setItem(LAST_SEARCH_KEY, JSON.stringify(searchData));
+  } catch (error) {
+    console.error("Error saving last search to localStorage:", error);
+  }
+}
+
+/**
+ * Retrieves the last search object from localStorage.
+ * @returns {Object|null} - The last search object or null if not found.
+ */
+export function getLastSearch() {
+  try {
+    const data = localStorage.getItem(LAST_SEARCH_KEY);
+    return data ? JSON.parse(data) : null;
+  } catch (error) {
+    console.error("Error reading last search from localStorage:", error);
+    return null;
+  }
+}

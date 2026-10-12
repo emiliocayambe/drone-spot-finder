@@ -4,7 +4,7 @@ import {
   latLonToTile,
   escapeHTML,
 } from "./utils.js";
-import { getFavorites } from "./localStorage.mjs";
+import { getFavorites, getLastSearch } from "./localStorage.mjs";
 
 document.addEventListener("DOMContentLoaded", async () => {
   // Dynamically load header and footer partials on page load
@@ -24,7 +24,18 @@ document.addEventListener("DOMContentLoaded", async () => {
     geoError.classList.remove("hidden");
   }
 
-  if (plannerDate) {
+  const last = getLastSearch();
+  if (last) {
+    if (searchInput && last.query) {
+      searchInput.value = last.query;
+    }
+
+    if (plannerDate) {
+      const today = getLocalISODate();
+      // Use saved date if it's today or in the future, otherwise fallback to today's date
+      plannerDate.value = last.date && last.date >= today ? last.date : today;
+    }
+  } else if (plannerDate) {
     plannerDate.value = getLocalISODate();
   }
 

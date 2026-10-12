@@ -1,6 +1,6 @@
 import { loadHeaderFooter, getLocalISODate, escapeHTML } from "../js/utils.js";
 import { searchLocations, getSunData } from "../js/externalServices.js";
-import { saveFavorite } from "../js/localStorage.mjs";
+import { saveFavorite, saveLastSearch } from "../js/localStorage.mjs";
 
 // Import Leaflet and its CSS
 import L from "leaflet";
@@ -115,7 +115,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
+  
+
   if (query) {
+    saveLastSearch(query, date);
     await handleSearch(
       query,
       date,
@@ -333,7 +336,7 @@ function spotCardTemplate(spot, date) {
   });
 
   return `
-    <div class="bg-white border border-slate-100 rounded-2xl p-5 shadow-sm hover:shadow-md transition flex flex-col justify-between">
+    <div class="bg-white border border-slate-100 rounded-2xl p-5 shadow-sm transition flex flex-col justify-between hover:-translate-y-1 hover:shadow-lg duration-200 fade-in">
       <div>
         <div class="flex justify-between items-start mb-3">
           <span class="px-2.5 py-1 bg-sky-50 text-sky-700 rounded-lg text-xs font-semibold uppercase tracking-wider">
