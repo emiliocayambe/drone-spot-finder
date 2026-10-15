@@ -15,3 +15,19 @@
 .fade-in {
   animation: fadeIn 0.4s ease-out both;
 }
+
+@keyframes savePop {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.12);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.save-pop {
+  animation: savePop 0.35s ease-out;
+}

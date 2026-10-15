@@ -63,7 +63,7 @@ function favoriteItemTemplate(spot) {
     <div class="bg-white border border-slate-100 rounded-2xl p-5 shadow-sm hover:shadow-md transition flex flex-col justify-between">
       <div>
         <div class="flex justify-between items-start mb-3">
-          <span class="px-2.5 py-1 bg-sky-50 text-sky-700 rounded-lg text-xs font-semibold uppercase tracking-wider">
+          <span class="inline-block px-2.5 py-1 bg-sky-50 text-sky-700 rounded-lg text-xs font-semibold uppercase tracking-wider hover:animate-pulse cursor-default">
             Favorite
           </span>
           <span class="text-xs text-slate-500">GPS: ${Number(lat).toFixed(2)}, ${Number(lon).toFixed(2)}</span>

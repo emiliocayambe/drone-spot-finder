@@ -104,6 +104,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         const spotData = JSON.parse(saveBtn.dataset.spot);
         saveFavorite(spotData);
         saveBtn.textContent = "Saved ✓";
+        saveBtn.classList.remove("save-pop");
+        void saveBtn.offsetWidth;
+        saveBtn.classList.add("save-pop");
         saveBtn.classList.remove("bg-sky-50", "text-sky-700");
         saveBtn.classList.add("bg-green-50", "text-green-600");
         setTimeout(() => {
